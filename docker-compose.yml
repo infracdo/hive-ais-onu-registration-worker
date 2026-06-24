@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  onu-registration-worker:
+    image: marcandres888/onu-registration-worker:latest
+    container_name: onu-registration-worker
+    restart: unless-stopped
+    
+    networks:
+      - portainer_default
+    
+    environment:
+      # Kafka Configuration
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_INPUT_TOPIC=olt_ont_registration
+      - KAFKA_OUTPUT_TOPIC=registered_onu
+      - KAFKA_CONSUMER_GROUP=onu-registration-worker
+      
+      
+      
+      # ONU Default Configuration
+      - ONU_DHCP_ENABLE=true
+      - ONU_GEMPORT=1
+      - ONU_IPHOST=1
+      - ONU_MODE=tag
+      - ONU_TYPE=ZTE-F622
+      - ONU_PING_RESPONSE=true
+      - ONU_SERVICE_PORT=1
+      - ONU_SWITCHPORT_BIND=switch_0/1
+      - ONU_TCONT=1
+      - ONU_TCONT_PROFILE=10M
+      - ONU_TRACEROUTE_RESPONSE=true
+      - ONU_USER_VLAN=100
+      - ONU_VLAN=100
+      - ONU_VLAN_PORT=eth_0/1
+      - ONU_VPORT=1
+      
+      # configuration type
+      - CONFIG_METHOD=api
+      # API Configuration
+      - API_BASE_URL=http://10.42.29.80:8000
+      # SNMP Configuration (when CONFIG_METHOD=snmp)
+      - SNMP_COMMUNITY=devCommunity
+      - SNMP_VERSION=2c
+      # Telnet Configuration (when CONFIG_METHOD=telnet)
+      - TELNET_USERNAME=xgate
+      - TELNET_PASSWORD=none
+      - TELNET_PORT=23
+
+      # Logging
+      - LOG_LEVEL=INFO
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  portainer_default:
+    external: true
