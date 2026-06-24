@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker Image
         run: 
 
-          docker build -t hive-ais-OR-worker:test .
+          docker build -t hive-ais-or-worker:test .
 
       - name: Clean Up Docker Garbage
         run: |
@@ -37,5 +37,5 @@ jobs:
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag hive-ais-OR-worker:test infracdo/hive-ais-OR-worker:test
-          docker push infracdo/hive-ais-OR-worker:test
+          docker tag hive-ais-or-worker:test infracdo/hive-ais-or-worker:test
+          docker push infracdo/hive-ais-or-worker:test
