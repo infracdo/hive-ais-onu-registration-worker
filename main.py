@@ -180,12 +180,14 @@ class ONURegistrationWorker:
             logger.error(f"❌ Failed to get PPPoE user for ONU serial {ont_serial}: {e}")
             return None
     
-    def register_onu(self, device_id: int, ont_serial: str) -> Optional[Dict[str, Any]]:
+    def register_onu(self, device_id: int, ont_serial: str, pppoe_user: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Register ONU through the API"""
         try:
             url = f"{self.api_base_url}/api/v1/olt/onu/register"
             
             payload = {
+                "pppoe_user": pppoe_user['user_name'],
+                "pppoe_pass": pppoe_user['user_password'],
                 "description": f"Customer Fiber connection for {ont_serial}",
                 "device_id": device_id,
                 "dhcp_enable": self.dhcp_enable,
@@ -493,14 +495,14 @@ class ONURegistrationWorker:
             
             if self.config_method == 'api':
                 # Use FastAPI endpoint
-                registration_result = self.register_onu(device_id, ont_serial)
+                registration_result = self.register_onu(device_id, ont_serial, pppoe_user)
                 
             elif self.config_method == 'snmp':
                 # Direct SNMP configuration
                 logger.warning("⚠️  SNMP method selected but not yet fully implemented")
                 logger.info("   Falling back to API method")
                 logger.info("   To implement SNMP: discover OIDs using snmp-walker-app")
-                registration_result = self.register_onu(device_id, ont_serial)
+                registration_result = self.register_onu(device_id, ont_serial, pppoe_user)
                 # TODO: Uncomment when SNMP is implemented
                 # registration_result = self.configure_onu_via_snmp(device_host, ont_serial)
                 
@@ -512,7 +514,7 @@ class ONURegistrationWorker:
                 
                 if not onu_id:
                     logger.warning("⚠️  ONU ID not found in trap data, using API method")
-                    registration_result = self.register_onu(device_id, ont_serial)
+                    registration_result = self.register_onu(device_id, ont_serial, pppoe_user)
                 else:
                     registration_result = self.configure_onu_via_telnet(
                         device_host, ont_serial, pon_port, onu_id
