@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - OR-test # Trigger on pushes to the main branch
+      - OR-prod # Trigger on pushes to the main branch
   #pull_request:  # Trigger on pull requests
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker Image
         run: 
 
-          docker build -t hive-ais-or-worker:test .
+          docker build -t hive-ais-or-worker:prod .
 
       - name: Clean Up Docker Garbage
         run: |
@@ -37,5 +37,5 @@ jobs:
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag hive-ais-or-worker:test infracdo/hive-ais-or-worker:test
-          docker push infracdo/hive-ais-or-worker:test
+          docker tag hive-ais-or-worker:prod infracdo/hive-ais-or-worker:prod
+          docker push infracdo/hive-ais-or-worker:prod
